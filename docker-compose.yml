@@ -150,10 +150,17 @@
 ## Simplificado para render.com
 volumes:
   n8n_storage:
+  qdrant_storage:
+
+networks:
+  n8n_internal:
 
 services:
   n8n:
     image: docker.n8n.io/n8nio/n8n
+    networks: ['n8n_internal']
+    hostname: n8n
+    container_name: n8n
     restart: unless-stopped
     environment:
       - DB_TYPE=postgresdb
@@ -167,3 +174,13 @@ services:
     volumes:
       - n8n_storage:/home/node/.n8n
 
+  qdrant:
+    image: qdrant/qdrant
+    hostname: qdrant
+    container_name: qdrant
+    networks: ['n8n_internal']
+    restart: unless-stopped
+    ports:
+      - 6333:6333
+    volumes:
+      - qdrant_storage:/qdrant/storage
